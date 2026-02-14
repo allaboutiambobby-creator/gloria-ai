@@ -25,8 +25,7 @@
       chat.innerHTML += `<div class="message"><b>You:</b> ${userText}</div>`;
       input.value = "";
 
-      try {
-        const response = await fetch("/chat-fallback", {
+      try {const response = await fetch("/chat", {", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: userText })
