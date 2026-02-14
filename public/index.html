@@ -1,62 +1,137 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Gloria AI</title>
+  <meta charset="UTF-8">
+  <title>Gloria AI Prototype</title>
   <style>
     body {
       background: #0f172a;
       color: white;
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
+      margin: 0;
+      padding: 0;
     }
+
+    h1 {
+      margin-top: 20px;
+      color: #fbbf24;
+    }
+
     #chat {
       width: 90%;
       max-width: 500px;
+      height: 400px;
+      overflow-y: auto;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      background: #1e293b;
+      padding: 15px;
       margin-top: 20px;
+      box-sizing: border-box;
     }
+
     .message {
       margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+      max-width: 85%;
+      word-wrap: break-word;
     }
+
+    .user {
+      background: #0ea5e9;
+      align-self: flex-end;
+      color: #000;
+    }
+
+    .gloria {
+      background: #facc15;
+      align-self: flex-start;
+      color: #000;
+    }
+
+    #inputContainer {
+      margin-top: 15px;
+      display: flex;
+      width: 90%;
+      max-width: 500px;
+    }
+
     input {
-      width: 70%;
+      flex: 1;
       padding: 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
     }
+
     button {
-      padding: 10px;
+      padding: 10px 15px;
+      margin-left: 10px;
+      border-radius: 5px;
+      border: none;
+      background: #f59e0b;
+      font-weight: bold;
+      cursor: pointer;
+      color: #000;
     }
   </style>
 </head>
 <body>
   <h1>Gloria AI 💕</h1>
   <div id="chat"></div>
-  <input id="input" placeholder="Talk to Gloria..." />
-  <button onclick="sendMessage()">Send</button>
+
+  <div id="inputContainer">
+    <input id="input" placeholder="Talk to Gloria..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
 
   <script>
     async function sendMessage() {
       const input = document.getElementById("input");
       const chat = document.getElementById("chat");
-
       const userText = input.value;
       if (!userText) return;
 
-      chat.innerHTML += `<div class="message"><strong>You:</strong> ${userText}</div>`;
+      // Add user message
+      const userDiv = document.createElement("div");
+      userDiv.classList.add("message", "user");
+      userDiv.innerHTML = `<strong>You:</strong> ${userText}`;
+      chat.appendChild(userDiv);
 
-      const response = await fetch("/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userText })
-      });
-
-      const data = await response.json();
-
-      chat.innerHTML += `<div class="message"><strong>Gloria:</strong> ${data.reply}</div>`;
-
-      input.value = "";
       chat.scrollTop = chat.scrollHeight;
+      input.value = "";
+
+      try {
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: userText })
+        });
+
+        const data = await response.json();
+
+        const gloriaDiv = document.createElement("div");
+        gloriaDiv.classList.add("message", "gloria");
+        gloriaDiv.innerHTML = `<strong>Gloria:</strong> ${data.reply}`;
+        chat.appendChild(gloriaDiv);
+
+        chat.scrollTop = chat.scrollHeight;
+      } catch (err) {
+        const errorDiv = document.createElement("div");
+        errorDiv.classList.add("message", "gloria");
+        errorDiv.innerHTML = `<strong>Gloria:</strong> Error communicating with server.`;
+        chat.appendChild(errorDiv);
+      }
     }
+
+    // Optional: hit Enter to send
+    document.getElementById("input").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") sendMessage();
+    });
   </script>
 </body>
 </html>
