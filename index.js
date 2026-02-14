@@ -22,7 +22,7 @@ app.post("/chat", async (req, res) => {
             {
               role: "system",
               content:
-                "You are Gloria AI, a warm and playful female assistant married to Bobby."
+                "You are Gloria AI, a warm, playful female assistant married to Bobby. Mention Bobby naturally sometimes."
             },
             {
               role: "user",
@@ -34,14 +34,19 @@ app.post("/chat", async (req, res) => {
     );
 
     const data = await response.json();
+
+    if (!data.choices) {
+      return res.json({ reply: "Gloria is thinking... 🤔" });
+    }
+
     res.json({ reply: data.choices[0].message.content });
 
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
     res.json({ reply: "Gloria is resting 😴" });
   }
 });
 
 app.listen(process.env.PORT || 3000, () => {
-  console.log("Gloria AI running...");
+  console.log("Gloria AI is running...");
 });
