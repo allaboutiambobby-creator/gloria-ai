@@ -7,19 +7,19 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
-// Memory object for prototype
+// Session memory for the prototype
 let memory = [];
 
 app.post("/chat", async (req, res) => {
   try {
     const userMessage = req.body.message;
-
-    // Save user message to memory
     memory.push({ role: "user", content: userMessage });
 
-    // Build messages to send to Groq
     const messages = [
-      { role: "system", content: "You are Gloria AI, a warm, playful female assistant married to Bobby. Refer to Bobby naturally." },
+      {
+        role: "system",
+        content: "You are Gloria AI, a warm, playful female assistant married to Bobby. You remember previous messages in this session. You may refer to Bobby naturally."
+      },
       ...memory
     ];
 
@@ -42,13 +42,14 @@ app.post("/chat", async (req, res) => {
 
     if (data.error) {
       console.log("Groq Error:", data.error);
-      return res.json({ reply: "Sorry, something went wrong with Groq API." });
+      return res.json({ reply: "Oops, something went wrong with Groq API." });
     }
 
     const gloriaReply = data.choices[0].message.content;
-
-    // Save Gloria reply to memory
     memory.push({ role: "assistant", content: gloriaReply });
+
+    // Optional: limit memory to last 20 messages to avoid long context
+    if (memory.length > 20) memory.shift();
 
     res.json({ reply: gloriaReply });
 
