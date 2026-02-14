@@ -1,7 +1,7 @@
 {
   "name": "gloria-ai",
   "version": "1.0.0",
-  "description": "Gloria AI Chatbot",
+  "description": "Gloria AI Chatbot Prototype",
   "type": "module",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "express": "^4.18.2",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "node-fetch": "^3.3.2"
   }
 }
