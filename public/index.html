@@ -1,41 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Gloria AI 💕</title>
+  <title>Gloria AI</title>
   <style>
-    body { font-family: Arial; background: #111; color: white; text-align: center; }
-    #chat { width: 400px; margin: auto; margin-top: 50px; }
-    input { width: 80%; padding: 10px; }
-    button { padding: 10px; }
-    .message { margin: 10px 0; }
+    body {
+      background: #0f172a;
+      color: white;
+      font-family: Arial;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #chat {
+      width: 90%;
+      max-width: 500px;
+      margin-top: 20px;
+    }
+    .message {
+      margin: 10px 0;
+    }
+    input {
+      width: 70%;
+      padding: 10px;
+    }
+    button {
+      padding: 10px;
+    }
   </style>
 </head>
 <body>
   <h1>Gloria AI 💕</h1>
   <div id="chat"></div>
   <input id="input" placeholder="Talk to Gloria..." />
-  <button onclick="send()">Send</button>
+  <button onclick="sendMessage()">Send</button>
 
   <script>
-    async function send() {
+    async function sendMessage() {
       const input = document.getElementById("input");
       const chat = document.getElementById("chat");
+
       const userText = input.value;
       if (!userText) return;
-      chat.innerHTML += `<div class="message"><b>You:</b> ${userText}</div>`;
+
+      chat.innerHTML += `<div class="message"><strong>You:</strong> ${userText}</div>`;
+
+      const response = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userText })
+      });
+
+      const data = await response.json();
+
+      chat.innerHTML += `<div class="message"><strong>Gloria:</strong> ${data.reply}</div>`;
+
       input.value = "";
-
-      try {const response = await fetch("/chat", {", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: userText })
-        });
-
-        const data = await response.json();
-        chat.innerHTML += `<div class="message"><b>Gloria:</b> ${data.reply}</div>`;
-      } catch (err) {
-        chat.innerHTML += `<div class="message"><b>Gloria:</b> Something went wrong 😢</div>`;
-      }
+      chat.scrollTop = chat.scrollHeight;
     }
   </script>
 </body>
