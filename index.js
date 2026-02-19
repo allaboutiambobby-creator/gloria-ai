@@ -59,6 +59,8 @@ app.post("/chat", async (req, res) => {
   }
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Gloria AI is running...");
+// Listen on the port Render assigns
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Gloria AI is running on port ${PORT}...`);
 });
